@@ -67,7 +67,7 @@ body.edit .edb{display:flex}body.noall .edb{display:none!important}.edb span{fon
 </head>
 <body>
 <div id="ld">جارٍ تجهيز الموديل…</div>
-<div class="top"><div><div class="eb">DESK SHELF · ROOM VIEW</div><h1>رف مكتبي خشبي</h1><p>غرفتي 300 × 300 سم · ارتفاع 190 سم · الرف 43 × 21 × 42 سم</p></div><div class="hint" id="ht">اسحب للدوران الحر<br>كليك يمين للتحريك<br>العجلة للتكبير<br>1 · 2 · 3 لإخفاء اللوحات · H لإخفاء الكل<br>E تحريك عناصر الرف · 4 إرجاع كل شيء للأصل</div></div>
+<div class="top"><div><div class="eb">DESK SHELF · ROOM VIEW</div><h1>رف مكتبي خشبي</h1><p>غرفتي 300 × 300 سم · ارتفاع 190 سم · الرف 43 × 21 × 42 سم</p></div><div class="hint" id="ht">اسحب للدوران الحر<br>كليك يمين للتحريك<br>العجلة للتكبير<br>1 · 2 · 3 لإخفاء اللوحات · H أو ضغطتين سريعتين لإخفاء/إظهار الكل<br>E تحريك عناصر الرف · 4 إرجاع كل شيء للأصل</div></div>
 <aside class="panel"><h3>لون الخشب</h3><div class="sw" id="sw"></div><label class="pick">لون مخصص<input type="color" id="pk"><b id="hx"></b></label><div class="sp"><h3>المقاسات</h3><div>العرض<b>43 سم</b></div><div>العمق<b>21 سم</b></div><div>الارتفاع الكلي<b>42 سم</b></div><div>ارتفاع الجوانب<b>23 سم</b></div><div>فاصل علوي<b>29.5 سم</b></div></div></aside>
 <aside class="panel rp"><h3>جدار التثبيت</h3><div class="seg" id="sg"><button data-w="back">خلف المكتب</button><button data-w="right">الجدار الأيمن (الشباك)</button><button data-w="left">جدار الدولاب والسرير</button><button data-w="front">الجدار الأمامي</button></div>
 <div class="rg"><div>الموضع على الجدار<b id="rsv"></b></div><input type="range" id="rs" step="1" aria-label="الموضع على الجدار"></div>
@@ -312,6 +312,11 @@ if(k){mvItem(...k);e.preventDefault()}else if(c=='Delete'||c=='Backspace'){hideS
 const UC=document.body.classList,UI={Digit1:'no1',Numpad1:'no1',Digit2:'no2',Numpad2:'no2',Digit3:'no3',Numpad3:'no3'},uiEl=document.getElementById('ui');let gT=0,tp=0;const uiAll=()=>{clearTimeout(gT);uiEl.classList.remove('ghost');if(UC.contains('noall'))UC.remove('noall','no1','no2','no3');else{UC.add('noall');gT=setTimeout(()=>uiEl.classList.add('ghost'),2500)}};
 addEventListener('keydown',e=>{if(e.altKey||e.metaKey)return;const c=UI[e.code];if(c){UC.toggle(c);if(e.ctrlKey)e.preventDefault();return}if((e.code=='KeyH'||e.code=='Digit0'||e.code=='Numpad0')&&!e.ctrlKey){uiAll();e.preventDefault()}});
 uiEl.onclick=()=>{if(uiEl.classList.contains('ghost')){const n=Date.now();if(n-tp<700){tp=0;uiAll()}else tp=n}else uiAll()};document.getElementById('bh').onclick=uiAll;
+/* double tap / double click anywhere on the scene → hide / show the whole UI */
+let tapT=0,tapX=0,tapY=0,dn=null;
+addEventListener('pointerdown',e=>{if(e.target===R.domElement&&e.isPrimary)dn={t:Date.now(),x:e.clientX,y:e.clientY}});
+addEventListener('pointerup',e=>{if(!dn||!e.isPrimary)return;const d=dn,n=Date.now();dn=null;if(n-d.t>350||Math.hypot(e.clientX-d.x,e.clientY-d.y)>12)return;
+if(n-tapT<400&&Math.hypot(e.clientX-tapX,e.clientY-tapY)<40){tapT=0;uiAll()}else{tapT=n;tapX=e.clientX;tapY=e.clientY}});
 const KM={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r',ShiftLeft:'s',ShiftRight:'s'};
 addEventListener('keydown',e=>{const k=KM[e.code];if(!k||!walk.on||(e.target.tagName=='INPUT'&&e.code.startsWith('Arrow')))return;K[k]=1;e.preventDefault()});
 addEventListener('keyup',e=>{const k=KM[e.code];if(k)K[k]=0});addEventListener('blur',()=>{for(const k in K)K[k]=0});
